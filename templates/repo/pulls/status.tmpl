@@ -23,14 +23,27 @@
 			{{ctx.Locale.Tr "repo.pulls.status_checking"}}
 		{{end}}
 
-		{{if .ShowHideChecks}}
 		<div class="ui right">
-			<button class="commit-status-hide-checks btn interact-fg"
-			data-show-all="{{ctx.Locale.Tr "repo.pulls.status_checks_show_all"}}"
-			data-hide-all="{{ctx.Locale.Tr "repo.pulls.status_checks_hide_all"}}">
-			{{ctx.Locale.Tr "repo.pulls.status_checks_hide_all"}}</button>
+			{{if .ShowHideChecks}}
+				<button class="commit-status-hide-checks btn interact-fg"
+				data-show-all="{{ctx.Locale.Tr "repo.pulls.status_checks_show_all"}}"
+				data-hide-all="{{ctx.Locale.Tr "repo.pulls.status_checks_hide_all"}}">
+				{{ctx.Locale.Tr "repo.pulls.status_checks_hide_all"}}</button>
+			{{end}}
+			{{if or (eq .CommitStatus.State "pending") (.MissingRequiredChecks)}}
+				<button class="ui small tiny compact button primary">
+					Approve all checks
+				</button>
+			{{else if or (eq .CommitStatus.State "failure") (eq .CommitStatus.State "error")}}
+				<button class="ui small compact button link-action">
+					Rerun all checks
+				</button>
+			{{else if not (eq .CommitStatus.State "success")}}
+				<button class="ui small compact button red">
+					Cancel all checks
+				</button>
+			{{end}}
 		</div>
-		{{end}}
 	</div>
 
 	<div class="commit-status-list">
